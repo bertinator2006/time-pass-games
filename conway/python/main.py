@@ -70,7 +70,7 @@ def CellNeighbourCount():
     for cell_index, cell in enumerate(board):
         neighbour_count = 0
         
-        is_right = cell_index % board_width == 9
+        is_right = cell_index % board_width == board_width - 1
         is_left = cell_index % board_width == 0
         is_top = cell_index % board_width == cell_index
         is_bot = cell_index + board_width > board_width * board_height - 1      
@@ -95,27 +95,9 @@ def CellNeighbourCount():
                 neighbour_count += CheckCellRelative(cell_index, BOT_LEFT)
             neighbour_count += CheckCellRelative(cell_index, BOT_CENTER)
         respective_neighbour_count.append(neighbour_count)
-    return respective_neighbour_count
-
-def PrintCellNeighbour(neighbours_list):
-    global board_width
-    neighbours_list
-    board_line = ""
-    counter = 0
-    for i in neighbours_list:
-        if counter == board_width-1: 
-            counter = 0 
-            print(board_line)
-            board_line = ""
-        else:
-            board_line += str(i)
-            board_line += str(i)
-            counter += 1
-
-def FindFlippingCells(neighbours_list):
-    
+        
     cell_to_flip = []
-    for index, neighbour_count in enumerate(neighbours_list):
+    for index, neighbour_count in enumerate(respective_neighbour_count):
         if board[index] == 0:
             if neighbour_count == 3:
                 cell_to_flip.append(index)
@@ -157,8 +139,6 @@ while running:
     clock.tick(FPS)
     cells_to_flip = CellNeighbourCount()
     FlipCells(cells_to_flip)
-    PrintBoard()
-    time.sleep(0.5)
     
 
 pygame.quit()
