@@ -10,9 +10,9 @@ dimensional_board = [
     [0,0,0,1,0,0,0,0,0,0],
     [0,0,0,0,0,0,0,0,0,0],
     [0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0]
+    [0,1,0,0,0,0,0,0,0,0],
+    [0,1,0,0,0,0,0,0,0,0],
+    [0,1,0,0,0,0,0,0,0,0]
 ]
 board_width = len(dimensional_board[0])
 board_height = len(dimensional_board)
@@ -139,6 +139,7 @@ while running:
     clock.tick(FPS)
     cells_to_flip = CellNeighbourCount()
     FlipCells(cells_to_flip)
+    
     
 
 pygame.quit()
