@@ -1,7 +1,7 @@
 import time
-# import pygame
+import pygame
 
-
+#board initialisation
 dimensional_board = [
     [0,0,0,0,0,0,0,0,0,0],
     [0,0,0,0,0,0,0,0,0,0],
@@ -16,17 +16,10 @@ dimensional_board = [
 ]
 board_width = len(dimensional_board[0])
 board_height = len(dimensional_board)
-
 board = []
-for i in dimensional_board:
-    for x in i:
-        board.append(x)
-
 cells_to_flip = []
 
-
-
-# position relatives
+# CONSTANTS
 TOP_LEFT = -board_width-1
 TOP_CENTER = -board_width
 TOP_RIGHT = -board_width+1
@@ -35,26 +28,39 @@ MID_RIGHT = 1
 BOT_LEFT = board_width-1
 BOT_CENTER = board_width
 BOT_RIGHT = board_width+1
+TILE_SIZE = 30
+FPS = 5
+
+#setting the 1D array for board
+for i in dimensional_board:
+    for x in i:
+        board.append(x)
+
+pygame.init()
+window = pygame.display.set_mode((TILE_SIZE * board_width,TILE_SIZE * board_height))
+clock = pygame.time.Clock()
+
+cells_to_flip = []
+is_first = True
 
 
-def PrintBoard():
-    
+def UpdateDisplay():
     global board_width
-    board_line = "|"
-    counter = 0
-    for i in board:
-        if counter == 0:
-            print("__" * board_width)
-        if counter % board_width == 9:
-            print(board_line + "|")
-            board_line = "|"
-        else:
-            if i == 1:
-                board_line += "[]"
-            elif i == 0:
-                board_line += "  "
-        counter += 1
-    print("__" * board_width)
+    window.fill((0,0,0))
+    for index_tile, tile in enumerate(board):
+        if tile == 1:
+            tile_rect = pygame.Rect((index_tile % board_width) * TILE_SIZE, (index_tile // board_width) * TILE_SIZE, TILE_SIZE, TILE_SIZE)
+            pygame.draw.rect(window,  (255,255,255), tile_rect)
+
+    if is_first:
+        return 1
+
+    rects_to_update = []
+    for cell in cells_to_flip:
+        rects_to_update.append(pygame.Rect((cell % board_width) * TILE_SIZE, (cell // board_width) * TILE_SIZE, TILE_SIZE, TILE_SIZE))
+    pygame.display.update(rects_to_update)
+    return 0
+
 def CheckCellRelative(cell_index, relative_position):
     return board[cell_index + relative_position]
 
@@ -120,7 +126,7 @@ def FindFlippingCells(neighbours_list):
                 cell_to_flip.append(index)
     
     return cell_to_flip
-    
+  
 def FlipCells(list_to_flip):
     for index in list_to_flip:
         if board[index] == 1:
@@ -130,27 +136,30 @@ def FlipCells(list_to_flip):
         # board[index] = -boarwd[index] + 1
 
 
-#main loop time
-PrintBoard()
-
-for i in range(100):
-    neighbour_counts = CellNeighbourCount()
-    cells_to_flip = FindFlippingCells(neighbour_counts) #it stops working here
-    FlipCells(cells_to_flip) 
+# main program
+running = True
+while running:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                running = False
+            if event.key == pygame.K_SPACE:
+                pass
+                # cells_to_flip = CellNeighbourCount()
+                # FlipCells(cells_to_flip)
+    
+    if UpdateDisplay():
+        pygame.display.update()
+        is_first = False
+    
+    clock.tick(FPS)
+    cells_to_flip = CellNeighbourCount()
+    FlipCells(cells_to_flip)
     PrintBoard()
     time.sleep(0.5)
+    
 
-# pygame.init()
-# window = pygame.display.set_mode((500,500))
-# clock = pygame.Clock()
-
-# while True:
-#     for event in pygame.event.get():
-#         if event.type == pygame.QUIT:
-#             pygame.quit()
-#             quit()
-#     window.fill((255,255,255))
-#     pygame.display.update()
-#     clock.tick(60)
-
+pygame.quit()
 
